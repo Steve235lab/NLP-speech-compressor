@@ -8,11 +8,13 @@ from websocket import create_connection
 import websocket
 from urllib.parse import quote
 import logging
+from api_info import app_id, api_key
+
 
 # reload(sys)
 # sys.setdefaultencoding("utf8")
-class Client():
-    def __init__(self):
+class Client:
+    def __init__(self, app_id, api_key):
         base_url = "ws://rtasr.xfyun.cn/v1/ws"
         ts = str(int(time.time()))
         tt = (app_id + ts).encode('utf-8')
@@ -30,6 +32,7 @@ class Client():
         self.ws = create_connection(base_url + "?appid=" + app_id + "&ts=" + ts + "&signa=" + quote(signa))
         self.trecv = threading.Thread(target=self.recv)
         self.trecv.start()
+        self.result = None
 
     def send(self, file_path):
         file_object = open(file_path, 'rb')
@@ -57,6 +60,7 @@ class Client():
                     print("receive result end")
                     break
                 result_dict = json.loads(result)
+                self.result = result_dict
                 # 解析结果
                 if result_dict["action"] == "started":
                     print("handshake success, result: " + result)
@@ -83,9 +87,8 @@ class Client():
 if __name__ == '__main__':
     logging.basicConfig()
 
-    app_id = ""
-    api_key = ""
     file_path = r"./test_1.pcm"
 
-    client = Client()
+    client = Client(app_id, api_key)
     client.send(file_path)
+
