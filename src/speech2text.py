@@ -1,5 +1,3 @@
-import wave
-import pyaudio
 from api_demos.rtasr_python3_demo.python.rtasr_python3_demo import Client
 from api_info import app_id, api_key
 
