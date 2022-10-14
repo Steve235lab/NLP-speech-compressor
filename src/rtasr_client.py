@@ -1,3 +1,7 @@
+# rtasr_client.py
+# 基于科大讯飞“实时语音转写” API demo 二次开发
+
+
 import hashlib
 import hmac
 import base64
@@ -34,18 +38,38 @@ class Client:
         self.trecv = threading.Thread(target=self.recv)
         self.trecv.start()
         self.result = None
-        self.outputs = []
+        self.outputs = []   # 以字符串列表的形式保存每次API返回的结果
+        # self.full_sentences = []
+        # self.selected_ct = 0
+        # self.recv_end_flag = False
+        # self.select_thread = threading.Thread(target=self.select_full_sentence)
+        # self.select_thread.start()
+        self.final_output = ''  # 用来保存最终结果的字符串
 
     def send(self, audio_frame):
+        """向API服务端口发送音频帧
+
+        :param audio_frame: 音频帧：长度1280字节，采样率16k、位长16bit、单声道，二进制数据块
+        :return: None
+        """
         self.ws.send(audio_frame)
         time.sleep(0.04)
         # print('Sent frame')
 
     def send_end_tag(self):
+        """发送结束标志
+
+        :return: None
+        """
         self.ws.send(bytes(self.end_tag.encode('utf-8')))
         # print("send end tag success")
 
     def recv(self):
+        """接受、保存、输出API返回的结果
+        注意，此函数在对象构造时以附加线程的方式运行
+
+        :return: None
+        """
         try:
             while self.ws.connected:
                 result = str(self.ws.recv())
@@ -64,10 +88,18 @@ class Client:
                     # result_3 = json.loads(result_2["st"])
                     # result_4 = json.loads(result_3["rt"])
                     try:
-                        output_cache = process_result_dict(json.loads(result_dict['data']))
+                        # 解包API返回值
+                        data_dict = json.loads(result_dict['data'])
+                        output_cache = process_result_dict(data_dict)
                         self.outputs.append(output_cache)
+                        # 控制台输出实时识别结果
                         os.system('cls')
-                        print(output_cache)
+                        # for full_sentence in self.full_sentences:
+                        #     print(full_sentence, end='')
+                        print(self.final_output, end='')    # 打印之前保存的结果
+                        print(output_cache)     # 打印本次接收的结果
+                        if data_dict["cn"]["st"]["type"] == "0":    # 判断该输出是否为最终结果
+                            self.final_output += output_cache
                     except:
                         print('Unwrapping result dict FAILED!')
 
@@ -77,10 +109,25 @@ class Client:
                     return
         except websocket.WebSocketConnectionClosedException:
             print("receive result end")
+            # self.recv_end_flag = True
 
     def close(self):
         self.ws.close()
         print("connection closed")
+
+    # def select_full_sentence(self):
+    #     while self.recv_end_flag is False or self.selected_ct < len(self.outputs) - 1:
+    #         try:
+    #             former_output = self.outputs[self.selected_ct]
+    #             new_output = self.outputs[self.selected_ct + 1]
+    #             self.selected_ct += 1
+    #             if len(new_output) < 4 or \
+    #                     (len(former_output) - len(new_output) > 0.4 * len(former_output) and
+    #                      former_output[:4] != new_output[:4]):
+    #                 self.full_sentences.append(former_output)
+    #         except:
+    #             pass
+    #     self.full_sentences.append(self.outputs[-1])
 
 
 if __name__ == '__main__':

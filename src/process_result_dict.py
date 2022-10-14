@@ -1,8 +1,11 @@
+# process_result_dict.py
+
+
 import json
 
 
 def process_result_dict(result_dict: dict) -> str:
-    """unwrap the json data returned from the Real-time ASR API
+    """对API返回的结果数据解包
 
     :param result_dict: json data
     :return: raw text content
