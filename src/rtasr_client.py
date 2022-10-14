@@ -7,6 +7,7 @@ from websocket import create_connection
 import websocket
 from urllib.parse import quote
 import logging
+import os
 from api_info import app_id, api_key
 from process_result_dict import process_result_dict
 
@@ -33,6 +34,7 @@ class Client:
         self.trecv = threading.Thread(target=self.recv)
         self.trecv.start()
         self.result = None
+        self.outputs = []
 
     def send(self, audio_frame):
         self.ws.send(audio_frame)
@@ -62,9 +64,12 @@ class Client:
                     # result_3 = json.loads(result_2["st"])
                     # result_4 = json.loads(result_3["rt"])
                     try:
-                        print(process_result_dict(json.loads(result_dict['data'])))
+                        output_cache = process_result_dict(json.loads(result_dict['data']))
+                        self.outputs.append(output_cache)
+                        os.system('cls')
+                        print(output_cache)
                     except:
-                        print(result_dict)
+                        print('Unwrapping result dict FAILED!')
 
                 if result_dict["action"] == "error":
                     print("rtasr error: " + result)

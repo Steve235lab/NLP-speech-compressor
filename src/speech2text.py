@@ -36,6 +36,6 @@ class Speech2Text:
 if __name__ == '__main__':
     s2t = Speech2Text()
     s2t.start()
-    time.sleep(5)
+    time.sleep(10)
     s2t.cut()
 
