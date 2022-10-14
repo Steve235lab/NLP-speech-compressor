@@ -1,4 +1,3 @@
-# -*- encoding:utf-8 -*-
 import hashlib
 import hmac
 import base64
@@ -8,7 +7,8 @@ from websocket import create_connection
 import websocket
 from urllib.parse import quote
 import logging
-from src.api_info import app_id, api_key
+from api_info import app_id, api_key
+from process_result_dict import process_result_dict
 
 
 # reload(sys)
@@ -34,23 +34,14 @@ class Client:
         self.trecv.start()
         self.result = None
 
-    def send(self, file_path):
-        file_object = open(file_path, 'rb')
-        try:
-            index = 1
-            while True:
-                chunk = file_object.read(1280)
-                if not chunk:
-                    break
-                self.ws.send(chunk)
+    def send(self, audio_frame):
+        self.ws.send(audio_frame)
+        time.sleep(0.04)
+        # print('Sent frame')
 
-                index += 1
-                time.sleep(0.04)
-        finally:
-            file_object.close()
-
+    def send_end_tag(self):
         self.ws.send(bytes(self.end_tag.encode('utf-8')))
-        print("send end tag success")
+        # print("send end tag success")
 
     def recv(self):
         try:
@@ -66,11 +57,14 @@ class Client:
                     print("handshake success, result: " + result)
 
                 if result_dict["action"] == "result":
-                    result_1 = result_dict
+                    # result_1 = result_dict
                     # result_2 = json.loads(result_1["cn"])
                     # result_3 = json.loads(result_2["st"])
                     # result_4 = json.loads(result_3["rt"])
-                    print("rtasr result: " + result_1["data"])
+                    try:
+                        print(process_result_dict(json.loads(result_dict['data'])))
+                    except:
+                        print(result_dict)
 
                 if result_dict["action"] == "error":
                     print("rtasr error: " + result)
@@ -91,4 +85,5 @@ if __name__ == '__main__':
 
     client = Client(app_id, api_key)
     client.send(file_path)
+    client.send_end_tag()
 

@@ -20,7 +20,7 @@ if __name__ == '__main__':
     frames = []
     for i in range(0, int(RATE / CHUNK * RECORD_SECONDS)):
         data = stream.read(CHUNK)
-    frames.append(data)
+        frames.append(data)
     print("* done recording")
     stream.stop_stream()
     stream.close()
