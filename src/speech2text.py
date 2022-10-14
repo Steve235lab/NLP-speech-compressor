@@ -17,7 +17,7 @@ class Speech2Text:
         audio_input_thread = Thread(target=self.local_audio.start)
         audio_input_thread.start()
         time.sleep(1)
-        while self.local_audio.is_recording is True:
+        while self.local_audio.is_recording is True or self.frame_index < len(self.local_audio.frames) - 1:
             try:
                 self.rtasr_client.send(self.local_audio.frames[self.frame_index])
                 # print(self.frame_index)
