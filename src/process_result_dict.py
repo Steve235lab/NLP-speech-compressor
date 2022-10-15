@@ -4,17 +4,23 @@
 import json
 
 
-def process_result_dict(result_dict: dict) -> str:
+def process_result_dict(result_dict: dict, get_words: bool = False) -> str or list:
     """对API返回的结果数据解包
 
     :param result_dict: json data
-    :return: raw text content
+    :param get_words: True - 以字符串列表的形式返回, False - 拼接为单个字符串后返回
+    :return: 单词列表或者整句字符串
     """
-    content_str = ''
-    for meta_dict in result_dict["cn"]["st"]["rt"][0]["ws"]:
-        content_str += meta_dict["cw"][0]["w"]
-
-    return content_str
+    if get_words is False:
+        content_str = ''
+        for meta_dict in result_dict["cn"]["st"]["rt"][0]["ws"]:
+            content_str += meta_dict["cw"][0]["w"]
+        return content_str
+    else:
+        word_list = []
+        for meta_dict in result_dict["cn"]["st"]["rt"][0]["ws"]:
+            word_list.append(meta_dict["cw"][0]["w"])
+        return word_list
 
 
 if __name__ == '__main__':

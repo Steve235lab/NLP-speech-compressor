@@ -45,6 +45,7 @@ class Client:
         # self.select_thread = threading.Thread(target=self.select_full_sentence)
         # self.select_thread.start()
         self.final_output = ''  # 用来保存最终结果的字符串
+        self.final_words = []
 
     def send(self, audio_frame):
         """向API服务端口发送音频帧
@@ -90,7 +91,7 @@ class Client:
                     try:
                         # 解包API返回值
                         data_dict = json.loads(result_dict['data'])
-                        output_cache = process_result_dict(data_dict)
+                        output_cache = process_result_dict(data_dict, get_words=False)
                         self.outputs.append(output_cache)
                         # 控制台输出实时识别结果
                         os.system('cls')
@@ -100,6 +101,7 @@ class Client:
                         print(output_cache)     # 打印本次接收的结果
                         if data_dict["cn"]["st"]["type"] == "0":    # 判断该输出是否为最终结果
                             self.final_output += output_cache
+                            self.final_words += process_result_dict(data_dict, get_words=True)
                     except:
                         print('Unwrapping result dict FAILED!')
 
