@@ -39,7 +39,7 @@ class Compressor:
             for word in self.segmented_text[i: i+window_length]:
                 sub_sentence += word
             # 以字典的形式存储子句内容与包含的单词
-            cache_dict = {'sub_sentence': sub_sentences, 'words': self.segmented_text[i: i + window_length]}
+            cache_dict = {'sub_sentence': sub_sentence, 'words': self.segmented_text[i: i + window_length]}
             sub_sentences.append(cache_dict)
 
         # 对不含重叠部分的子句计算BM25相似度
@@ -75,18 +75,22 @@ class Compressor:
                 cache[sub_sentence_num] = 0     # 将与自己的相似度置为0，避免影响后续处理
                 max_score = max(cache)      # 相似度最大值
                 max_score_index = cache.argmax()    # 最相似子句标号
+                print("在组", group_num, "中与子句", sub_sentence_num, "最相似的子句是：", max_score_index, "，相似度为：", max_score)
                 avg_list.append(cache.mean())   # 计算均值
             group_avg.append(mean(avg_list))
         bm25_avg = mean(group_avg)  # 整体相似度均值
-        print(bm25_avg)
+        print("整体BM25平均值为：", bm25_avg)
+        print(grouped_sub_sentences[4][8]['sub_sentence'], grouped_sub_sentences[4][9]['sub_sentence'])
 
 
 if __name__ == '__main__':
     f = open('../output/speech2text/speech2text_1665842278.txt', encoding='utf-8')
     content = f.readlines()
     passage = ''
+    words = []
     for word in content:
         passage += word[:-1]
-    compressor = Compressor(passage, content)
+        words.append(word[:-1])
+    compressor = Compressor(passage, words)
     compressor.slide_window_compress()
     # print(compressor.sub_sentences_bm25_scores)
