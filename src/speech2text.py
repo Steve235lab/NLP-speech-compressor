@@ -12,6 +12,11 @@ from local_audio_input import LocalAudio
 
 class Speech2Text:
     def __init__(self, output_words: bool = True):
+        """
+
+        :param output_words: True - 以完成分词后的形式将结果写入输出文件, False - 以整段连贯文字的方式将结果写入输出文件
+        :return: None
+        """
         self.rtasr_client = Client(app_id, api_key)
         self.local_audio = LocalAudio()
         self.frame_index = 0    # 语音输入与音频帧发送异步控制帧编号计数器
