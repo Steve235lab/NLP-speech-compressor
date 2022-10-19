@@ -23,7 +23,8 @@ class Compressor:
         for i in range(len(dependence_list)):
             dependence_list[i] = dependence_list[i].split()
         self.dependence_list = dependence_list
-        self.sub_sentences_bm25_scores = None   # 查询：[组号][子句号1][子句号2]
+        self.sub_sentences_bm25_scores = []   # 查询：sub_sentences_bm25_scores[组号][index] 即为标号为 index 的子句与下一子句的相似度，末尾子句相似度记为0
+        self.bm25_threshold = 3.0   # 经验数据：窗口长度为5，阈值取5.0；窗口长度为3，阈值取3.0
 
     def slide_window_compress(self, window_length: int = 5, stride: int = 1):
         """尝试使用定长（词语个数）滑窗组成子句，然后使用BM25算法计算子句间的相似度，进而对高相似度的子句进行合并实现文本压缩。
@@ -63,24 +64,47 @@ class Compressor:
             for sub_sentence in group:
                 group_scores.append(bm25.get_scores(sub_sentence['words']))
             bm25_scores.append(group_scores)
-        self.sub_sentences_bm25_scores = bm25_scores
+        # 取每个子句与相邻下一子句的相似度保存为对象的成员
+        for group in bm25_scores:
+            neighbour_scores = []
+            for i in range(len(group)):
+                if i + 1 < len(group):
+                    neighbour_scores.append(group[i][i+1])
+                else:
+                    neighbour_scores.append(0.)     # 末尾子句相似度记为0
+            self.sub_sentences_bm25_scores.append(neighbour_scores)
 
-        # 从每组中找出相似度超过某一阈值的子句
         # 计算平均BM25相似度
-        group_avg = []      # 各组的相似度均值
-        for group_num in range(len(self.sub_sentences_bm25_scores)):
-            avg_list = []
-            for sub_sentence_num in range(len(self.sub_sentences_bm25_scores[group_num])):
-                cache = self.sub_sentences_bm25_scores[group_num][sub_sentence_num]
-                cache[sub_sentence_num] = 0     # 将与自己的相似度置为0，避免影响后续处理
-                max_score = max(cache)      # 相似度最大值
-                max_score_index = cache.argmax()    # 最相似子句标号
-                print("在组", group_num, "中与子句", sub_sentence_num, "最相似的子句是：", max_score_index, "，相似度为：", max_score)
-                avg_list.append(cache.mean())   # 计算均值
-            group_avg.append(mean(avg_list))
-        bm25_avg = mean(group_avg)  # 整体相似度均值
-        print("整体BM25平均值为：", bm25_avg)
-        print(grouped_sub_sentences[4][8]['sub_sentence'], grouped_sub_sentences[4][9]['sub_sentence'])
+        # group_avg = []      # 各组的相似度均值
+        # for group in self.sub_sentences_bm25_scores:
+        #     group_avg.append(mean(group))
+        # print(group_avg)
+
+        # 从每组中找出并合并相似度超过某一阈值的相邻子句
+        reach_threshold_flag = False
+        for g in range(len(self.sub_sentences_bm25_scores)):
+            if reach_threshold_flag is True:    # 完成一次片段删除后即跳出循环
+                break
+            for i in range(len(self.sub_sentences_bm25_scores[g])):
+                # 第 g 组，第 i 个子句与相邻下一个子句相似度超过阈值
+                if self.sub_sentences_bm25_scores[g][i] >= self.bm25_threshold:
+                    reach_threshold_flag = True
+                    # 从原始文本中删掉第 i 个子句对应的部分
+                    index_to_del = stride * g + i * window_length
+                    for del_cnt in range(window_length):
+                        deleted_word = self.segmented_text.pop(index_to_del)
+                        # print(deleted_word)
+                    self.original_text = ''
+                    for word in self.segmented_text:
+                        self.original_text += word
+                    # print('HERE')
+                    break
+
+        # 如果进行了片段删除，则重复递归执行该函数
+        if reach_threshold_flag is True:
+            # print('HERE2')
+            self.sub_sentences_bm25_scores = []
+            self.slide_window_compress(window_length, stride)
 
 
 if __name__ == '__main__':
@@ -91,6 +115,7 @@ if __name__ == '__main__':
     for word in content:
         passage += word[:-1]
         words.append(word[:-1])
+    print(passage)
     compressor = Compressor(passage, words)
-    compressor.slide_window_compress()
-    # print(compressor.sub_sentences_bm25_scores)
+    compressor.slide_window_compress(3, 1)
+    print(compressor.original_text)
