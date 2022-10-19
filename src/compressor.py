@@ -3,7 +3,7 @@
 
 
 from numpy import *
-from pyhanlp import HanLP
+# from pyhanlp import HanLP
 
 from rank_bm25 import BM25Okapi
 
