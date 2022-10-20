@@ -4,6 +4,7 @@
 
 from threading import Thread
 import time
+import os
 
 from rtasr_client import Client
 from api_info import app_id, api_key
@@ -65,6 +66,8 @@ class Speech2Text:
         time.sleep(0.5)
         # 以 speech2text_0123456789.txt 作为文件名对最终结果存档（仅用作中间结果分析，后续步骤直接访问内存对象，无需从该存档文件中加载数据）
         timestamp = str(int(time.time()))
+        if not os.path.exists('../output/speech2text/'):
+            os.mkdir('../output/speech2text/')
         output_file = open('../output/speech2text/speech2text_' + timestamp + '.txt', 'w', encoding='utf-8')
         if self.output_words is False:
             output_file.write(self.rtasr_client.final_output)
