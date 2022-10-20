@@ -26,7 +26,7 @@ class Compressor:
         self.sub_sentences_bm25_scores = []   # 查询：sub_sentences_bm25_scores[组号][index] 即为标号为 index 的子句与下一子句的相似度，末尾子句相似度记为0
         self.bm25_threshold = 3.0   # 经验数据：窗口长度为5，阈值取5.0；窗口长度为3，阈值取3.0
 
-    def slide_window_compress(self, window_length: int = 5, stride: int = 1):
+    def slide_window_compress(self, window_length: int = 3, stride: int = 1):
         """尝试使用定长（词语个数）滑窗组成子句，然后使用BM25算法计算子句间的相似度，进而对高相似度的子句进行合并实现文本压缩。
 
         :param window_length: 滑窗长度（单词个数）
