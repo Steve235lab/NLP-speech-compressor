@@ -33,6 +33,7 @@ class Compressor:
         :param stride: 滑动步长
         :return: None
         """
+        self.bm25_threshold = float(window_length)
         # 生成子句列表
         sub_sentences = []
         for i in range(0, len(self.segmented_text)-window_length, stride):
