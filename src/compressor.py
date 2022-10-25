@@ -3,7 +3,7 @@
 
 
 from numpy import *
-# from pyhanlp import HanLP
+from pyhanlp import HanLP
 
 from rank_bm25 import BM25Okapi
 
@@ -18,11 +18,11 @@ class Compressor:
         """
         self.original_text = text
         self.segmented_text = words
-        # self.text_parse_dependence = HanLP.parseDependency(self.original_text)    # HanLP依存句法分析
-        # dependence_list = str(self.text_parse_dependence).split('\n')
-        # for i in range(len(dependence_list)):
-        #     dependence_list[i] = dependence_list[i].split()
-        # self.dependence_list = dependence_list
+        self.text_parse_dependence = HanLP.parseDependency(self.original_text)    # HanLP依存句法分析
+        dependence_list = str(self.text_parse_dependence).split('\n')
+        for i in range(len(dependence_list)):
+            dependence_list[i] = dependence_list[i].split()
+        self.dependence_list = dependence_list
         self.sub_sentences_bm25_scores = []   # 查询：sub_sentences_bm25_scores[组号][index] 即为标号为 index 的子句与下一子句的相似度，末尾子句相似度记为0
         self.bm25_threshold = 3.0   # 经验数据：窗口长度为5，阈值取5.0；窗口长度为3，阈值取3.0
 
@@ -109,7 +109,7 @@ class Compressor:
 
 
 if __name__ == '__main__':
-    f = open('../output/speech2text/speech2text_1665842278.txt', encoding='utf-8')
+    f = open('../output/speech2text/speech2text_1666312801.txt', encoding='utf-8')
     content = f.readlines()
     passage = ''
     words = []
@@ -120,3 +120,4 @@ if __name__ == '__main__':
     compressor = Compressor(passage, words)
     compressor.slide_window_compress(3, 1)
     print(compressor.original_text)
+    print(compressor.dependence_list)
