@@ -1,15 +1,20 @@
 # NLP-speech-compressor
-This speech compressor can record your speech, transform it into texts and then compress (delete all the meaningless parts like repeats and modal verbs) to make the words more friendly to readers.
+This speech compressor can record your speech, transform it into texts and then compress (delete all the meaningless 
+parts like repeats and modal verbs) to make the words more friendly to readers.
 
 ## Usage
 * Setup
-  * Install python 3.9
+  * Install python 3.9 (The python 3.7 version is only for prototyping some methods in PyHanLP)
   * Switch to the repository directory
   * Start a new python venv and install the packages 
     ```shell
     pip install -r .\requirements.txt
     ```
-* Run locally
+* Run with Qt GUI
+    ```shell
+    python .\src\Qt_main.py
+    ```
+* Run in terminal
     ```shell
     python .\src\local_main.py
     ```
