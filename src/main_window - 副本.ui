@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>1121</width>
+    <height>711</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>NLP Speech Compressor</string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>../res/Setup.ico</normaloff>../res/Setup.ico</iconset>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <widget class="SwitchButton" name="SwitchButton">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>50</y>
+      <width>146</width>
+      <height>146</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="OriginalText" name="OriginalText">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>50</y>
+      <width>781</width>
+      <height>271</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="CompressedText" name="CompressedText">
+    <property name="geometry">
+     <rect>
+      <x>260</x>
+      <y>380</y>
+      <width>781</width>
+      <height>271</height>
+     </rect>
+    </property>
+   </widget>
+   <widget class="CompressButton" name="CompressButton">
+    <property name="geometry">
+     <rect>
+      <x>80</x>
+      <y>380</y>
+      <width>160</width>
+      <height>160</height>
+     </rect>
+    </property>
+    <property name="cursor">
+     <cursorShape>PointingHandCursor</cursorShape>
+    </property>
+    <property name="text">
+     <string/>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>210</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>黑体</family>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>音频输入</string>
+    </property>
+   </widget>
+   <widget class="QLabel" name="label_2">
+    <property name="geometry">
+     <rect>
+      <x>120</x>
+      <y>550</y>
+      <width>91</width>
+      <height>21</height>
+     </rect>
+    </property>
+    <property name="font">
+     <font>
+      <family>黑体</family>
+      <pointsize>12</pointsize>
+      <weight>50</weight>
+      <bold>false</bold>
+     </font>
+    </property>
+    <property name="text">
+     <string>精简摘要</string>
+    </property>
+   </widget>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>SwitchButton</class>
+   <extends>QPushButton</extends>
+   <header>Qt_SwitchButton</header>
+  </customwidget>
+  <customwidget>
+   <class>OriginalText</class>
+   <extends>QTextEdit</extends>
+   <header>Qt_OriginalText</header>
+  </customwidget>
+  <customwidget>
+   <class>CompressedText</class>
+   <extends>QTextEdit</extends>
+   <header>Qt_CompressedText</header>
+  </customwidget>
+  <customwidget>
+   <class>CompressButton</class>
+   <extends>QPushButton</extends>
+   <header>Qt_CompressButton</header>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections/>
+</ui>
