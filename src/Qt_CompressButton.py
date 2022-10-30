@@ -20,5 +20,5 @@ class CompressButton(QPushButton):
     def compress(self):
         original_text_obj = self.parent.findChild(QtWidgets.QTextEdit, "original_text")
         APP_CORE.compressor.original_text = original_text_obj.toPlainText()
-        print(APP_CORE.compressor.original_text)
+        # print(APP_CORE.compressor.original_text)
         APP_CORE.compress()
