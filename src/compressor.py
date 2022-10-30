@@ -3,7 +3,7 @@
 
 
 from numpy import *
-# from pyhanlp import HanLP
+from pyhanlp import HanLP
 
 from rank_bm25 import BM25Okapi
 
@@ -18,13 +18,14 @@ class Compressor:
         """
         self.original_text = text
         self.segmented_text = words
-        # self.text_parse_dependence = HanLP.parseDependency(self.original_text)    # HanLP依存句法分析
-        # dependence_list = str(self.text_parse_dependence).split('\n')
-        # for i in range(len(dependence_list)):
-        #     dependence_list[i] = dependence_list[i].split()
-        # self.dependence_list = dependence_list
+        self.text_parse_dependence = HanLP.parseDependency(self.original_text)    # HanLP依存句法分析
+        dependence_list = str(self.text_parse_dependence).split('\n')
+        for i in range(len(dependence_list)):
+            dependence_list[i] = dependence_list[i].split()
+        self.dependence_list = dependence_list
         self.sub_sentences_bm25_scores = []   # 查询：sub_sentences_bm25_scores[组号][index] 即为标号为 index 的子句与下一子句的相似度，末尾子句相似度记为0
         self.bm25_threshold = 3.0   # 经验数据：窗口长度为5，阈值取5.0；窗口长度为3，阈值取3.0
+        self.dependence_del_list = []   # 根据依存句法删除的单词列表
 
     def slide_window_compress(self, window_length: int = 3, stride: int = 1):
         """尝试使用定长（词语个数）滑窗组成子句，然后使用BM25算法计算子句间的相似度，进而对高相似度的子句进行合并实现文本压缩。
@@ -107,9 +108,35 @@ class Compressor:
             self.sub_sentences_bm25_scores = []
             self.slide_window_compress(window_length, stride)
 
+    def text_rank_compress(self):
+        pass
+
+    def parse_dependence_compress(self):
+        """使用HanLP.parseDependency方法对文档进行依存句法分析，然后删除特定依存类型的单词
+        删除的类型：状中结构、右附加关系
+
+        :return: None
+        """
+        self.text_parse_dependence = HanLP.parseDependency(self.original_text)  # HanLP依存句法分析
+        dependence_list = str(self.text_parse_dependence).split('\n')
+        compressed_text = ''
+        for i in range(len(dependence_list)):
+            cache = dependence_list[i].split()
+            if len(cache) == 10:
+                if cache[7] == '状中结构' or cache[7] == '右附加关系':
+                    self.dependence_del_list.append(cache[1])
+                else:
+                    dependence_list[i] = cache
+                    compressed_text += cache[1]
+        self.dependence_list = dependence_list
+        self.original_text = compressed_text
+
+    def modal_verbs_compress(self):
+        pass
+
 
 if __name__ == '__main__':
-    f = open('../output/speech2text/speech2text_1666312801.txt', encoding='utf-8')
+    f = open('../output/speech2text/speech2text_zq.txt', encoding='utf-8')
     content = f.readlines()
     passage = ''
     words = []
@@ -118,6 +145,7 @@ if __name__ == '__main__':
         words.append(word[:-1])
     print(passage)
     compressor = Compressor(passage, words)
-    compressor.slide_window_compress(3, 1)
+    # compressor.slide_window_compress(3, 1)
+    compressor.parse_dependence_compress()
     print(compressor.original_text)
     # print(compressor.dependence_list)
