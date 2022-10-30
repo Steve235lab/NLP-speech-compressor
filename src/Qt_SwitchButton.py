@@ -1,3 +1,7 @@
+# Qt_SwitchButton.py
+# 自定义控件类
+
+
 from PyQt5.QtWidgets import QPushButton
 
 from app_core import APP_CORE

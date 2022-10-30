@@ -11,7 +11,7 @@ from compressor import Compressor
 class LocalApp:
     def __init__(self):
         self.s2t = None
-        self.compressor = None
+        self.compressor = Compressor('', [])
         self.is_recording = False
 
     def start_input_audio(self):
@@ -43,12 +43,10 @@ class LocalApp:
             return "请先执行压缩操作！"
 
     def compress(self):
-        if len(self.s2t.rtasr_client.final_output) > 0:
+        if len(self.compressor.original_text) > 0:
             print("正在对文本进行精简压缩...")
             start_time = time.time()
-            compressor = Compressor(self.s2t.rtasr_client.final_output, self.s2t.rtasr_client.final_words)
-            self.compressor = compressor
-            self.compressor.slide_window_compress(3, 1)
+            self.compressor.compress()
             end_time = time.time()
             print("压缩已完成，用时：", end_time - start_time)
         else:

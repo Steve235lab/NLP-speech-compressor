@@ -9,10 +9,10 @@ class AppCore(LocalApp):
             return "等待语音输入..."
 
     def get_compressed_text(self) -> str:
-        if self.compressor is not None:
+        if len(self.compressor.original_text) > 0:
             return self.compressor.original_text
         else:
-            return "等待精简摘要完成..."
+            return "未检测到已录入文本，请先录入文本！"
 
 
 APP_CORE = AppCore()

@@ -1,3 +1,7 @@
+# Qt_CompressedText.py
+# 自定义控件类
+
+
 from PyQt5 import QtCore
 from PyQt5.QtWidgets import QTextEdit
 

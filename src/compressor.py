@@ -19,11 +19,8 @@ class Compressor:
         """
         self.original_text = text
         self.segmented_text = words
-        self.text_parse_dependence = HanLP.parseDependency(self.original_text)    # HanLP依存句法分析
-        dependence_list = str(self.text_parse_dependence).split('\n')
-        for i in range(len(dependence_list)):
-            dependence_list[i] = dependence_list[i].split()
-        self.dependence_list = dependence_list
+        self.text_parse_dependence = None
+        self.dependence_list = None
         self.sub_sentences_bm25_scores = []   # 查询：sub_sentences_bm25_scores[组号][index] 即为标号为 index 的子句与下一子句的相似度，末尾子句相似度记为0
         self.bm25_threshold = 3.0   # 经验数据：窗口长度为5，阈值取5.0；窗口长度为3，阈值取3.0
         self.slide_window_del_list = []
@@ -118,7 +115,15 @@ class Compressor:
 
         :param output_sentences: 输出的句子个数
         """
-        self.text_rank_summary = HanLP.extractSummary(self.original_text, output_sentences)
+        sentence_cnt = output_sentences
+        while self.text_rank_summary is None and sentence_cnt > 0:
+            try:
+                self.text_rank_summary = HanLP.extractSummary(self.original_text, sentence_cnt)
+            except:
+                sentence_cnt -= 1
+
+        if self.text_rank_summary is None:
+            self.text_rank_summary = [self.original_text]
 
     def parse_dependence_compress(self):
         """使用HanLP.parseDependency方法对文档进行依存句法分析，然后删除特定依存类型的单词
@@ -158,12 +163,18 @@ class Compressor:
 
     def compress(self):
         """联合调用多种方法实现文本精简压缩"""
-        self.slide_window_compress(3, 1)
-        self.slide_window_compress(2, 1)
+        try:
+            self.slide_window_compress(3, 1)
+        except:
+            pass
+        try:
+            self.slide_window_compress(2, 1)
+        except:
+            pass
         self.modal_verbs_compress()
         self.parse_dependence_compress()
         self.original_text = merge(self.original_text)
-        self.text_rank_compress(3)
+        # self.text_rank_compress(5)
 
 
 if __name__ == '__main__':
@@ -176,7 +187,6 @@ if __name__ == '__main__':
         words.append(word[:-1])
     print(passage)
     compressor = Compressor(passage, words)
-    raw_dependence_list = compressor.dependence_list
     # compressor.slide_window_compress(3, 1)
     # compressor.parse_dependence_compress()
     compressor.compress()

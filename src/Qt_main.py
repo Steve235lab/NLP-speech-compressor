@@ -1,3 +1,7 @@
+# Qt_main.py
+# Qt应用程序入口
+
+
 from PyQt5 import uic
 from PyQt5.QtWidgets import QApplication
 
@@ -17,13 +21,14 @@ import rtasr_client
 import speech2text
 
 
-# 建立图形窗口
-Form, Window = uic.loadUiType("main_window.ui")
+# 启动Qt应用
+if __name__ == "__main__":
+    Form, Window = uic.loadUiType("main_window.ui")
 
-app = QApplication([])
-window = Window()
-form = Form()
-form.setupUi(window)
-window.show()
-app.exec_()
+    app = QApplication([])
+    window = Window()
+    form = Form()
+    form.setupUi(window)
+    window.show()
+    app.exec_()
 
