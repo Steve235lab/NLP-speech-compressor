@@ -2,24 +2,6 @@
 # 合并文本中连续重复的词
 
 
-# from word_segment import WordSegment
-
-
-# def merge(sentence: str) -> str:
-#     """合并文本中连续重复的词
-#
-#     """
-#     ws = WordSegment(sentence)
-#     ws.fully_segment()
-#     merged_sentence = ''
-#     index = 0
-#     while index < len(ws.words) - 1:
-#         if ws.words[index] != ws.words[index+1]:
-#             merged_sentence += ws.words[index]
-#         index += 1
-#
-#     return merged_sentence
-
 def merge(sentence, max_ngram_length=4):
     """基于ngram合并文本中连续重复的词
 

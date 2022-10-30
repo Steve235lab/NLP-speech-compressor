@@ -6,6 +6,7 @@ from numpy import *
 from pyhanlp import HanLP
 
 from rank_bm25 import BM25Okapi
+from merge_repeated_words import merge
 
 
 class Compressor:
@@ -25,7 +26,9 @@ class Compressor:
         self.dependence_list = dependence_list
         self.sub_sentences_bm25_scores = []   # 查询：sub_sentences_bm25_scores[组号][index] 即为标号为 index 的子句与下一子句的相似度，末尾子句相似度记为0
         self.bm25_threshold = 3.0   # 经验数据：窗口长度为5，阈值取5.0；窗口长度为3，阈值取3.0
+        self.slide_window_del_list = []
         self.dependence_del_list = []   # 根据依存句法删除的单词列表
+        self.modal_verbs = ['嗯', '呃', '呢', '啊', '它这个', '他这个', '她这个', '它这种', '他这种', '她这种']
 
     def slide_window_compress(self, window_length: int = 3, stride: int = 1):
         """尝试使用定长（词语个数）滑窗组成子句，然后使用BM25算法计算子句间的相似度，进而对高相似度的子句进行合并实现文本压缩。
@@ -95,6 +98,7 @@ class Compressor:
                     index_to_del = stride * g + i * window_length
                     for del_cnt in range(window_length):
                         deleted_word = self.segmented_text.pop(index_to_del)
+                        self.slide_window_del_list.append(deleted_word)
                         # print(deleted_word)
                     self.original_text = ''
                     for word in self.segmented_text:
@@ -114,6 +118,7 @@ class Compressor:
     def parse_dependence_compress(self):
         """使用HanLP.parseDependency方法对文档进行依存句法分析，然后删除特定依存类型的单词
         删除的类型：状中结构、右附加关系
+        连续多个“定中关系”仅保留最后一个
 
         :return: None
         """
@@ -123,16 +128,36 @@ class Compressor:
         for i in range(len(dependence_list)):
             cache = dependence_list[i].split()
             if len(cache) == 10:
-                if cache[7] == '状中结构' or cache[7] == '右附加关系':
+                # 删除被归为'状中结构'和'右附加关系'的单词
+                if (cache[7] == '状中结构' and (cache[3] != 'v' and cache[3] != 'c')) or cache[7] == '右附加关系':
                     self.dependence_del_list.append(cache[1])
+                    dependence_list[i] = []
+                # '定中关系'中词性为习语i和代词r的单词
+                # elif cache[7] == '定中关系' and (cache[3] == 'i' or cache[3] == 'r'):
+                #     self.dependence_del_list.append(cache[1])
+                #     dependence_list[i] = []
                 else:
                     dependence_list[i] = cache
                     compressed_text += cache[1]
+        # 移除空元素
+        for dep in dependence_list:
+            if not dep:
+                dependence_list.remove(dep)
         self.dependence_list = dependence_list
         self.original_text = compressed_text
 
     def modal_verbs_compress(self):
-        pass
+        """删除语气词"""
+        for modal_verb in self.modal_verbs:
+            self.original_text = self.original_text.replace(modal_verb, '')
+
+    def compress(self):
+        """联合调用多种方法实现文本精简压缩"""
+        self.slide_window_compress(3, 1)
+        self.slide_window_compress(2, 1)
+        self.modal_verbs_compress()
+        self.parse_dependence_compress()
+        self.original_text = merge(self.original_text)
 
 
 if __name__ == '__main__':
@@ -145,7 +170,9 @@ if __name__ == '__main__':
         words.append(word[:-1])
     print(passage)
     compressor = Compressor(passage, words)
+    raw_dependence_list = compressor.dependence_list
     # compressor.slide_window_compress(3, 1)
-    compressor.parse_dependence_compress()
+    # compressor.parse_dependence_compress()
+    compressor.compress()
     print(compressor.original_text)
     # print(compressor.dependence_list)
