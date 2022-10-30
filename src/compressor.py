@@ -29,6 +29,7 @@ class Compressor:
         self.slide_window_del_list = []
         self.dependence_del_list = []   # 根据依存句法删除的单词列表
         self.modal_verbs = ['嗯', '呃', '呢', '啊', '它这个', '他这个', '她这个', '它这种', '他这种', '她这种']
+        self.text_rank_summary = None
 
     def slide_window_compress(self, window_length: int = 3, stride: int = 1):
         """尝试使用定长（词语个数）滑窗组成子句，然后使用BM25算法计算子句间的相似度，进而对高相似度的子句进行合并实现文本压缩。
@@ -112,8 +113,12 @@ class Compressor:
             self.sub_sentences_bm25_scores = []
             self.slide_window_compress(window_length, stride)
 
-    def text_rank_compress(self):
-        pass
+    def text_rank_compress(self, output_sentences: int = 3):
+        """调用HanLP中的TextRank方法进行参考摘要
+
+        :param output_sentences: 输出的句子个数
+        """
+        self.text_rank_summary = HanLP.extractSummary(self.original_text, output_sentences)
 
     def parse_dependence_compress(self):
         """使用HanLP.parseDependency方法对文档进行依存句法分析，然后删除特定依存类型的单词
@@ -158,6 +163,7 @@ class Compressor:
         self.modal_verbs_compress()
         self.parse_dependence_compress()
         self.original_text = merge(self.original_text)
+        self.text_rank_compress(3)
 
 
 if __name__ == '__main__':
@@ -175,4 +181,5 @@ if __name__ == '__main__':
     # compressor.parse_dependence_compress()
     compressor.compress()
     print(compressor.original_text)
+    print(compressor.text_rank_summary)
     # print(compressor.dependence_list)
