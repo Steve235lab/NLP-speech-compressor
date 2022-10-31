@@ -172,17 +172,18 @@ class Compressor:
 
     def compress(self):
         """联合调用多种方法实现文本精简压缩"""
-        # try:
-        #     self.slide_window_compress(3, 1)
-        # except:
-        #     pass
-        # try:
-        #     self.slide_window_compress(2, 1)
-        # except:
-        #     pass
-        self.slide_window_compress(5, 1)
-        self.slide_window_compress(3, 1)
-        self.slide_window_compress(2, 1)
+        try:
+            self.slide_window_compress(5, 1)
+        except:
+            pass
+        try:
+            self.slide_window_compress(3, 1)
+        except:
+            pass
+        try:
+            self.slide_window_compress(2, 1)
+        except:
+            pass
         self.modal_verbs_compress()
         self.parse_dependence_compress()
         self.original_text = merge(self.original_text)
