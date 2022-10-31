@@ -14,5 +14,15 @@ class AppCore(LocalApp):
         else:
             return "未检测到已录入文本，请先录入文本！"
 
+    def get_text_rank_output(self) -> str:
+        if self.compressor.text_rank_summary is None:
+            return "未检测到已录入文本，请先录入文本！"
+        else:
+            summary_str = ''
+            cache = self.compressor.text_rank_summary
+            for summary in cache:
+                summary_str += '* ' + summary + '\n'
+            return summary_str
+
 
 APP_CORE = AppCore()

@@ -44,6 +44,7 @@ class CompressedText(QTextEdit):
         self.hLayout.addStretch(1)
         self.hLayout.addLayout(self.vLayout)
         self.setLayout(self.hLayout)
+        self.setToolTip('滑窗BM25与依存句法分析压缩结果')
 
     def update_value(self):
         timer = QtCore.QTimer(self)
@@ -60,3 +61,12 @@ class CompressedText(QTextEdit):
     def leaveEvent(self, a0: QtCore.QEvent) -> None:
         # 光标移开时隐藏复制按钮
         self.copy_button.hide()
+
+
+class TextRankOutput(CompressedText):
+    def __init__(self, parent=None):
+        super(TextRankOutput, self).__init__(parent)
+        self.setToolTip('对左侧文本做TextRank的结果')
+
+    def set_text(self):
+        self.setText(APP_CORE.get_text_rank_output())

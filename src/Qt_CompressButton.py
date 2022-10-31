@@ -16,6 +16,7 @@ class CompressButton(QPushButton):
                            "QPushButton:pressed{border-image: url(../res/SlideWindow.png}")
         self.clicked.connect(self.compress)
         self.parent = parent
+        self.setToolTip('执行压缩')
 
     def compress(self):
         original_text_obj = self.parent.findChild(QtWidgets.QTextEdit, "original_text")

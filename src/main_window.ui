@@ -51,19 +51,21 @@
       </property>
      </widget>
     </item>
-    <item row="0" column="2" rowspan="4">
-     <widget class="OriginalText" name="original_text">
-      <property name="sizePolicy">
-       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-        <horstretch>0</horstretch>
-        <verstretch>0</verstretch>
-       </sizepolicy>
-      </property>
+    <item row="7" column="0">
+     <widget class="QLabel" name="label_2">
       <property name="font">
        <font>
         <family>微软雅黑 Light</family>
-        <pointsize>10</pointsize>
+        <pointsize>12</pointsize>
+        <weight>50</weight>
+        <bold>false</bold>
        </font>
+      </property>
+      <property name="text">
+       <string>精简摘要</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
       </property>
      </widget>
     </item>
@@ -101,21 +103,29 @@
       </property>
      </widget>
     </item>
-    <item row="7" column="0">
-     <widget class="QLabel" name="label_2">
+    <item row="0" column="2" rowspan="4" colspan="2">
+     <widget class="OriginalText" name="original_text">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
       <property name="font">
        <font>
         <family>微软雅黑 Light</family>
-        <pointsize>12</pointsize>
-        <weight>50</weight>
-        <bold>false</bold>
+        <pointsize>10</pointsize>
        </font>
       </property>
-      <property name="text">
-       <string>精简摘要</string>
-      </property>
-      <property name="alignment">
-       <set>Qt::AlignCenter</set>
+     </widget>
+    </item>
+    <item row="6" column="3" rowspan="3">
+     <widget class="TextRankOutput" name="TextRank">
+      <property name="font">
+       <font>
+        <family>微软雅黑 Light</family>
+        <pointsize>10</pointsize>
+       </font>
       </property>
      </widget>
     </item>
@@ -143,6 +153,11 @@
    <class>CompressButton</class>
    <extends>QPushButton</extends>
    <header>Qt_CompressButton</header>
+  </customwidget>
+  <customwidget>
+   <class>TextRankOutput</class>
+   <extends>QTextEdit</extends>
+   <header>Qt_CompressedText</header>
   </customwidget>
  </customwidgets>
  <resources/>
