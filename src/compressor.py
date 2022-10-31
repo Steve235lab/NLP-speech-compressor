@@ -3,7 +3,7 @@
 
 
 from numpy import *
-from pyhanlp import HanLP
+from pyhanlp import HanLP, JClass
 
 from rank_bm25 import BM25Okapi
 from merge_repeated_words import merge
@@ -36,6 +36,15 @@ class Compressor:
         :return: None
         """
         self.bm25_threshold = float(window_length)
+        self.sub_sentences_bm25_scores = []
+        # 考虑到添加了用户手动输入原始文本的情况，需要对 self.segmented_text 进行更新，这里使用HanLP中的急速分词方法进行重新分词
+        SpeedTokenizer = JClass("com.hankcs.hanlp.tokenizer.SpeedTokenizer")
+        JClass("com.hankcs.hanlp.HanLP$Config").ShowTermNature = False
+        self.segmented_text = list()
+        cache = SpeedTokenizer.segment(self.original_text)
+        for seg_word in cache:
+            self.segmented_text.append(seg_word.word)
+
         # 生成子句列表
         sub_sentences = []
         for i in range(0, len(self.segmented_text)-window_length, stride):
@@ -90,7 +99,7 @@ class Compressor:
                 break
             for i in range(len(self.sub_sentences_bm25_scores[g])):
                 # 第 g 组，第 i 个子句与相邻下一个子句相似度超过阈值
-                if self.sub_sentences_bm25_scores[g][i] >= self.bm25_threshold:
+                if abs(self.sub_sentences_bm25_scores[g][i]) >= self.bm25_threshold:
                     reach_threshold_flag = True
                     # 从原始文本中删掉第 i 个子句对应的部分
                     index_to_del = stride * g + i * window_length
@@ -163,18 +172,21 @@ class Compressor:
 
     def compress(self):
         """联合调用多种方法实现文本精简压缩"""
-        try:
-            self.slide_window_compress(3, 1)
-        except:
-            pass
-        try:
-            self.slide_window_compress(2, 1)
-        except:
-            pass
+        # try:
+        #     self.slide_window_compress(3, 1)
+        # except:
+        #     pass
+        # try:
+        #     self.slide_window_compress(2, 1)
+        # except:
+        #     pass
+        self.slide_window_compress(5, 1)
+        self.slide_window_compress(3, 1)
+        self.slide_window_compress(2, 1)
         self.modal_verbs_compress()
         self.parse_dependence_compress()
         self.original_text = merge(self.original_text)
-        # self.text_rank_compress(5)
+        self.text_rank_compress(5)
 
 
 if __name__ == '__main__':
