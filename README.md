@@ -4,7 +4,7 @@ parts like repeats and modal verbs) to make the words more friendly to readers.
 
 ## Usage
 * Setup
-  * Install python 3.9 (The python 3.7 version is only for prototyping some methods in PyHanLP)
+  * Install python 3.7 
   * Switch to the repository directory
   * Start a new python venv and install the packages 
     ```shell
@@ -12,7 +12,7 @@ parts like repeats and modal verbs) to make the words more friendly to readers.
     ```
 * Run with Qt GUI
     ```shell
-    python .\src\Qt_main.py
+    python .\src\main_window.py
     ```
 * Run in terminal
     ```shell
