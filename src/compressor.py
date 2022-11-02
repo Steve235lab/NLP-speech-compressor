@@ -124,6 +124,7 @@ class Compressor:
 
         :param output_sentences: 输出的句子个数
         """
+        self.text_rank_summary = None
         sentence_cnt = output_sentences
         while self.text_rank_summary is None and sentence_cnt > 0:
             try:
