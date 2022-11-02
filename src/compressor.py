@@ -172,6 +172,7 @@ class Compressor:
 
     def compress(self):
         """联合调用多种方法实现文本精简压缩"""
+        self.modal_verbs_compress()
         try:
             self.slide_window_compress(5, 1)
         except:
@@ -184,21 +185,21 @@ class Compressor:
             self.slide_window_compress(2, 1)
         except:
             pass
-        self.modal_verbs_compress()
         self.parse_dependence_compress()
         self.original_text = merge(self.original_text)
         self.text_rank_compress(5)
 
 
 if __name__ == '__main__':
-    f = open('../output/speech2text/speech2text_zq.txt', encoding='utf-8')
-    content = f.readlines()
-    passage = ''
-    words = []
-    for word in content:
-        passage += word[:-1]
-        words.append(word[:-1])
-    print(passage)
+    passage = '信息熵来进行的这种它的基本概念，从而呢实现它在这个新词提取，那么它的结果是怎么样的呢？就是说嗯我们看到他这个在这种四大名著里边嗯简单的提取出来一些这种嗯基本的一些嗯新词，啊然后我们可以看到它的相关的一些比较比较这种奇怪或者是比较生僻的这种词语，包括没有嗯这个红楼梦里面的这个麝月，嗯以及是这个像这个三国演义里边的这种嗯祁山啊和这种什么西游记里边猪八戒、啊八戒啊这些呃都有都有都有一定的这种体现，或者是可以检测到或者识别到。'
+    SpeedTokenizer = JClass("com.hankcs.hanlp.tokenizer.SpeedTokenizer")
+    JClass("com.hankcs.hanlp.HanLP$Config").ShowTermNature = False
+    words = list()
+    cache = SpeedTokenizer.segment(passage)
+    for seg_word in cache:
+        # print(seg_word.word)
+        words.append(seg_word.word)
+
     compressor = Compressor(passage, words)
     # compressor.slide_window_compress(3, 1)
     # compressor.parse_dependence_compress()
