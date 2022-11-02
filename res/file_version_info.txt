@@ -6,7 +6,7 @@ VSVersionInfo(
   ffi=FixedFileInfo(
     # filevers and prodvers should be always a tuple with four items: (1, 2, 3, 4)
     # Set not needed items to zero 0.
-    filevers=(1, 2, 0, 2),
+    filevers=(1, 2, 0, 3),
     prodvers=(0, 0, 0, 0),
     # Contains a bitmask that specifies the valid bits 'flags'r
     mask=0x1f,
@@ -32,12 +32,12 @@ VSVersionInfo(
         [StringStruct('CompanyName', 'Steve D. J.'),
         StringStruct('Comments', '42.192.44.52:8000'),
         StringStruct('FileDescription', 'NLP Speech Compressor'),
-        StringStruct('FileVersion', '1.2.0.2'),
+        StringStruct('FileVersion', '1.2.0.3'),
         StringStruct('InternalName', 'NLP Speech Compressor'),
         StringStruct('LegalCopyright', 'Copyright (C) 2022 Steve D. J.'),
         StringStruct('OriginalFilename', 'NLP_Speech_Compressor.exe'),
         StringStruct('ProductName', 'NLP-speech-compressor'),
-        StringStruct('ProductVersion', '1.2.0.2')])
+        StringStruct('ProductVersion', '1.2.0.3')])
       ]), 
     VarFileInfo([VarStruct('Translation', [0, 1252])])
   ]
