@@ -2,6 +2,10 @@
 This speech compressor can record your speech, transform it into texts and then compress (delete all the meaningless 
 parts like repeats and modal verbs) to make the words more friendly to readers.
 
+---
+__Need Java installation to run the HanLP toolkit!!!__
+---
+
 ## Usage
 * Setup
   * Install python 3.7 
